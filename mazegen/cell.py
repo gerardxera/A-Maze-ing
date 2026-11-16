@@ -2,17 +2,19 @@
 from enum import IntFlag
 from typing import Self
 
+
 class Wall(IntFlag):
+
     """Mascara de bits para las 4 paredes cardinales del laberinto."""
 
     NONE = 0
     NORTH = 1  # Bit 0 (LSB)
-    EAST = 2   # Bit 1  
+    EAST = 2   # Bit 1
     SOUTH = 4  # Bit 2
     WEST = 8   # Bit 3
     ALL = NORTH | EAST | SOUTH | WEST  # 15 (0xF)
 
-    @property  #Propiedad que devuelve la pared contraria (util para mantener coherencia entre celdas)
+    @property  # Propiedad que devuelve la pared contraria (util para mantener coherencia entre celdas)
     def opposite(self) -> Self:
         """Devuelve la pared opuesta (util para coherencia entre celdas)."""
         mapping = {
@@ -33,11 +35,11 @@ class Cell:
         self.walls: Wall = Wall.ALL    # Inicia con las 4 paredes cerradas (15 / 0xF)
         self.visited: bool = False     # Marca si la celda ya fue visitada durante la generacion.
         self.is_42_cell: bool = False  # Indica si esta celda forma parte del patron 42.
-    
+
     def has_wall(self, direction: Wall) -> bool:
         """Comprueba y devuelve True si esa pared especifica esta cerrada."""
         return bool(self.walls & direction)
-    
+
     def remove_wall(self, direction: Wall) -> None:
         """Derriba la pared indicada (operacion bitwise)."""
         self.walls &= ~direction
