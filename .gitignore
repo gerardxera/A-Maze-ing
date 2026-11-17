@@ -11,3 +11,6 @@ maze.txt
 .vscode/
 .idea/
 .DS_Store
+dist/
+build/
+*.egg-info/
