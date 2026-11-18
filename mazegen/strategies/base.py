@@ -1,13 +1,12 @@
 #!/usr/bin/python3
-
-"""Modulo que define la clase base abstracta para las estrategias de generación."""
+"""Modulo que define la clase base abstracta para las estrategias."""
 
 from abc import ABC, abstractmethod
 from mazegen.grid import Grid
 
 
 class GenerationStrategy(ABC):
-    """Clase base abstracta (interfaz) para los algoritmos de generacion de laberintos."""
+    """Interfaz abstracta para los algoritmos de generacion."""
 
     @abstractmethod
     def generate(
@@ -16,11 +15,11 @@ class GenerationStrategy(ABC):
         entry: tuple[int, int],
         exit_pos: tuple[int, int],
     ) -> None:
-        """Ejecuta el algoritmo de generacion modificando la cuadricula proporcionada.
+        """Ejecuta el algoritmo de generacion sobre la cuadricula.
 
         Args:
-            grid: Instancia de la cuadricula sobre la cual derribar paredes.
-            entry: Coordenadas (x, y) del punto de entrada del laberinto.
-            exit: Coordenadas (x, y) del punto de salida del laberinto.
+            grid: Instancia de Grid sobre la cual derribar paredes.
+            entry: Coordenadas (x, y) de entrada del laberinto.
+            exit_pos: Coordenadas (x, y) de salida del laberinto.
         """
         pass

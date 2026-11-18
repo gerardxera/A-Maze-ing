@@ -1,11 +1,10 @@
 #!/usr/bin/python3
-"""Modulo para la resolucion de laberintos mediante busqueda en anchura (BFS)."""
+"""Modulo para la resolucion de laberintos mediante BFS."""
 
 from collections import deque
 from mazegen.cell import Cell, Wall
 from mazegen.grid import Grid
 
-# Mapeo de paredes a direcciones cardinales en texto
 WALL_TO_DIRECTION: dict[Wall, str] = {
     Wall.NORTH: "N",
     Wall.SOUTH: "S",
@@ -19,16 +18,16 @@ def find_shortest_path(
     entry: tuple[int, int],
     exit_pos: tuple[int, int],
 ) -> list[tuple[int, int]]:
-    """Encuentra el camino mas corto entre entry y exit usando BFS.
+    """Encuentra el camino mas corto entre entry y exit_pos con BFS.
 
     Args:
         grid: Cuadricula del laberinto ya generado.
         entry: Coordenadas (x, y) de inicio.
         exit_pos: Coordenadas (x, y) de destino.
 
-    Return:
-        Lista ordenada de coordenadas [(x1, y1), (x2, y2), ...] desde entry hasta exit.
-        Retorna una lista vacia si no existe camino posible.
+    Returns:
+        Lista ordenada de coordenadas [(x, y), ...] desde entry hasta
+        exit_pos, o lista vacia si no existe camino valido.
     """
     start_cell = grid.get_cell(entry[0], entry[1])
     target_cell = grid.get_cell(exit_pos[0], exit_pos[1])
@@ -36,14 +35,16 @@ def find_shortest_path(
     if start_cell is None or target_cell is None:
         return []
 
+    if start_cell.is_42_cell or target_cell.is_42_cell:
+        return []
+
     if entry == exit_pos:
         return [entry]
 
-    queue: deque[Cell] = deque([start_cell])  # Cola de espera = queue
+    queue: deque[Cell] = deque([start_cell])
     visited: set[tuple[int, int]] = {(start_cell.x, start_cell.y)}
     parent: dict[tuple[int, int], tuple[int, int]] = {}
-
-    reached = False  # Estado de la ejecucion del analisis del programa
+    reached = False
 
     while queue:
         current = queue.popleft()
@@ -52,13 +53,10 @@ def find_shortest_path(
             reached = True
             break
 
-        # Explorar celdas vecinas contiguos
         for neighbor, wall in grid.get_neighbors(current):
-            # No debe ser celda del patron 42
             if neighbor.is_42_cell:
                 continue
 
-            # Solo se puede avanzar si NO hay pared en esa direccion
             if not current.has_wall(wall):
                 coord = (neighbor.x, neighbor.y)
                 if coord not in visited:
@@ -69,7 +67,6 @@ def find_shortest_path(
     if not reached:
         return []
 
-    # Reconstruccion del camino desde exit_pos hacia entry
     path: list[tuple[int, int]] = []
     curr_coord: tuple[int, int] | None = exit_pos
 
@@ -82,13 +79,13 @@ def find_shortest_path(
 
 
 def path_to_directions(path: list[tuple[int, int]]) -> str:
-    """Convierte una secuencia de coordenadas en una cadena de direcciones (NESW).
+    """Convierte una lista de coordenadas en direcciones (NESW).
 
     Args:
         path: Lista de tuplas (x, y) que forman el camino continuo.
 
     Returns:
-        Cadena con las direcciones (ej. 'EESW').
+        Cadena de texto con las direcciones (ej. 'EESW').
     """
     if len(path) < 2:
         return ""
