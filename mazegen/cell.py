@@ -1,6 +1,6 @@
 #!/usr/bin/python3
+from __future__ import annotations
 from enum import IntFlag
-from typing import Self
 
 
 class Wall(IntFlag):
@@ -14,8 +14,8 @@ class Wall(IntFlag):
     WEST = 8   # Bit 3
     ALL = NORTH | EAST | SOUTH | WEST  # 15 (0xF)
 
-    @property  # Propiedad que devuelve la pared contraria (util para mantener coherencia entre celdas)
-    def opposite(self) -> Self:
+    @property
+    def opposite(self) -> Wall:
         """Devuelve la pared opuesta (util para coherencia entre celdas)."""
         mapping = {
             Wall.NORTH: Wall.SOUTH,
@@ -27,14 +27,15 @@ class Wall(IntFlag):
 
 
 class Cell:
-    """Representacion de una casilla individual dentro de la rejilla del laberinto."""
+    """Representacion de una casilla individual
+    dentro de la rejilla del laberinto."""
 
     def __init__(self, x: int, y: int) -> None:
-        self.x: int = x                # Guarda las coordenadas de la celda x y.
+        self.x: int = x
         self.y: int = y
-        self.walls: Wall = Wall.ALL    # Inicia con las 4 paredes cerradas (15 / 0xF)
-        self.visited: bool = False     # Marca si la celda ya fue visitada durante la generacion.
-        self.is_42_cell: bool = False  # Indica si esta celda forma parte del patron 42.
+        self.walls: Wall = Wall.ALL
+        self.visited: bool = False
+        self.is_42_cell: bool = False
 
     def has_wall(self, direction: Wall) -> bool:
         """Comprueba y devuelve True si esa pared especifica esta cerrada."""
@@ -54,7 +55,8 @@ class Cell:
         return format(int(self.walls), "X")
 
     def __repr__(self) -> str:
-        """Define como se muestra la celda al imprimirla (util para depurar)."""
+        """Define como se muestra la celda
+        al imprimirla (util para depurar)."""
         return (
             f"Cell(x={self.x}, y={self.y}, walls=0x{self.hex_value}, "
             f"visited={self.visited}, is_42={self.is_42_cell})"
