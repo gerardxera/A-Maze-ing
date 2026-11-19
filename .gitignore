@@ -1,20 +1,16 @@
-# Byte-compiled / optimizados
 __pycache__/
 *.py[cod]
 *$py.class
-# Entornos virtuales
 .venv/
 venv/
 ENV/
-# Pruebas y linters
-.pytest_cache/
 .mypy_cache/
-.ruff_cache/
-# Salidas temporales generadas localmente
-maze_output.txt
-output_maze.txt
+.pytest_cache/
+maze.txt
 *.log
-# Editores y SO
 .vscode/
 .idea/
 .DS_Store
+dist/
+build/
+*.egg-info/

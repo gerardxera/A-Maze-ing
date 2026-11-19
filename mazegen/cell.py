@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Modulo que define el modelo de celda y mascara de bits de paredes."""
 
+from __future__ import annotations
 from enum import IntFlag
 
 
@@ -15,7 +16,7 @@ class Wall(IntFlag):
     ALL = NORTH | EAST | SOUTH | WEST  # 15 (0xF)
 
     @property
-    def opposite(self) -> "Wall":
+    def opposite(self) -> Wall:
         """Devuelve la pared opuesta para mantener coherencia simetrica."""
         mapping: dict[Wall, Wall] = {
             Wall.NORTH: Wall.SOUTH,
