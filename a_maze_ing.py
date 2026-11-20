@@ -1,33 +1,31 @@
 #!/usr/bin/python3
 
+"""Punto de entrada principal para ejecutar A-Maze-ing desde consola."""
+
 import sys
 from pydantic import ValidationError
 from mazegen.generator import MazeGenerator, MazeResult
 from ui.cli_menu import run_cli_menu
-from ui.config_parser import parse_config_file
+from ui.config_parser import MazeConfig, parse_config_file
 
 
 class MazeGeneratorAdapter:
-    def __init__(
-        self,
-        width: int,
-        height: int,
-        entry: tuple[int, int],
-        exit: tuple[int, int],
-        perfect: bool,
-        seed: int | None = None,
-    ) -> None:
+    """Adapta MazeGenerator a la interfaz esperada por el menu CLI."""
+
+    def __init__(self, config: MazeConfig) -> None:
+        """Inicializa el generador con la configuracion validada."""
         self._generator = MazeGenerator(
-            width=width,
-            height=height,
-            entry=entry,
-            exit_pos=exit,
-            perfect=perfect,
-            seed=seed,
+            width=config.width,
+            height=config.height,
+            entry=config.entry,
+            exit_pos=config.exit,
+            perfect=config.perfect,
+            seed=config.seed,
         )
         self._result: MazeResult | None = None
 
     def generate(self) -> None:
+        """Genera o regenera el laberinto usando el motor backend."""
         self._result = self._generator.generate()
 
     def get_grid(self) -> list[list[int]]:
@@ -53,7 +51,7 @@ def main() -> None:
     """Punto de entrada principal de la aplicacion A-Maze-ing."""
     if len(sys.argv) != 2:
         print(
-            "Uso correcto: python3 a_maze_ing.py <archivo_config>",
+            "Uso correcto: python3 a_maze_ing.py <config_file>",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -62,14 +60,7 @@ def main() -> None:
 
     try:
         config = parse_config_file(config_path)
-        generator = MazeGeneratorAdapter(
-            width=config.width,
-            height=config.height,
-            entry=config.entry,
-            exit=config.exit,
-            perfect=config.perfect,
-            seed=config.seed,
-        )
+        generator = MazeGeneratorAdapter(config)
         generator.generate()
         generator.write_output_file(config.output_file)
         run_cli_menu(generator, config)
@@ -78,7 +69,7 @@ def main() -> None:
         ValueError,
         ValidationError,
         OSError,
-        RuntimeError
+        RuntimeError,
     ) as err:
         print(f"Error de configuracion o ejecucion:\n{err}", file=sys.stderr)
         sys.exit(1)
