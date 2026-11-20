@@ -3,6 +3,7 @@
 from typing import Protocol
 from ui.config_parser import MazeConfig
 from ui.renderer.ascii_renderer import AsciiRenderer
+import time
 
 
 class MazeGeneratorProtocol(Protocol):
@@ -26,7 +27,20 @@ class MazeGeneratorProtocol(Protocol):
 
 
 def _clear_screen() -> None:
-    print("\033[2J\033[H", end="")
+    print("\033c\033[H\033[2J\033[3J", end="", flush=True)
+
+
+def _animate_path(
+    renderer: AsciiRenderer,
+    grid: list[list[int]],
+    config: MazeConfig,
+    path: list[tuple[int, int]],
+) -> None:
+    """Anima paso a paso el recorrido desde la entrada hasta la salida."""
+    for step in range(1, len(path) + 1):
+        _clear_screen()
+        renderer.render(grid, config.entry, config.exit, path[:step])
+        time.sleep(0.035)
 
 
 def _print_menu_options(
@@ -88,8 +102,11 @@ def run_cli_menu(
             )
         elif choice == "2":
             renderer.toggle_path()
-            estado = "activada" if renderer.show_path else "oculta"
-            status_msg = f"Visualizacion de ruta {estado}."
+            if renderer.show_path:
+                _animate_path(renderer, grid, config, path)
+                status_msg = "Visualizacion de ruta activada."
+            else:
+                status_msg = "Visualizacion de ruta oculto."
         elif choice == "3":
             renderer.next_wall_color()
             status_msg = f"Color de paredes: {renderer.wall_color_name}."
